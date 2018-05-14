@@ -79,6 +79,7 @@ public class Z3Wrapper {
                         "-t:" + timeout);
                 pb.redirectInput(ProcessBuilder.Redirect.PIPE);
                 pb.redirectOutput(ProcessBuilder.Redirect.PIPE);
+                long startTime = System.currentTimeMillis();
                 Process z3Process = pb.start();
                 BufferedWriter input = new BufferedWriter(new OutputStreamWriter(
                     z3Process.getOutputStream()));
@@ -89,7 +90,7 @@ public class Z3Wrapper {
                 result = null;
                 String line = output.readLine();
                 while (line != null && line.startsWith("(error")) {
-                    System.err.println("z3 error: " + line);
+                    System.err.println("\nz3 error: " + line);
                     result = line;
                     line = output.readLine();
                 }
@@ -97,6 +98,10 @@ public class Z3Wrapper {
                     result = line;
                 }
                 z3Process.destroy();
+                long duration = System.currentTimeMillis() - startTime;
+                if (duration >= timeout) {
+                    System.out.println("\nz3 likely timeout\n");
+                }
                 if (result != null) {
                     break;
                 }

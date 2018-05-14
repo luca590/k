@@ -65,7 +65,7 @@ public class SMTOperations {
             try {
                 String query = KILtoSMTLib.translateImplication(left, right, rightOnlyVariables);
                 if (global.debug) {
-                    System.err.println("z3 query: " + query);
+                    System.err.println("\nz3 query: " + query);
                 }
                 return z3.isUnsat(
                         query,
