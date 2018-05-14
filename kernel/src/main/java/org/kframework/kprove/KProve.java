@@ -42,7 +42,7 @@ public class KProve {
     private static FileUtil files;
     private static TTYInfo tty;
     private static Tuple2<Definition, Module> compiled;
-    private static KProveOptions options;
+    public static KProveOptions options;
 
     @Inject
     public KProve(KExceptionManager kem, Stopwatch sw, FileUtil files, TTYInfo tty) {
