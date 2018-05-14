@@ -293,7 +293,7 @@ public class KRun {
                 return super.apply(k);
             }
         }.apply(input);
-        K alphaRenamed = new TransformK() {
+        /*K alphaRenamed = new TransformK() {
             Map<KVariable, KVariable> renames = new HashMap<>();
             int newCount = 0;
 
@@ -304,9 +304,9 @@ public class KRun {
                 }
                 return k;
             }
-        }.apply(sortedComm);
+        }.apply(sortedComm);*/
         return Formatter.format(
-                new AddBrackets(test).addBrackets(KOREToTreeNodes.apply(KOREToTreeNodes.up(test, alphaRenamed), test)), colorize);
+                new AddBrackets(test).addBrackets(KOREToTreeNodes.apply(KOREToTreeNodes.up(test, sortedComm), test)), colorize);
     }
 
     public K externalParse(String parser, String value, Sort startSymbol, Source source, CompiledDefinition compiledDef) {

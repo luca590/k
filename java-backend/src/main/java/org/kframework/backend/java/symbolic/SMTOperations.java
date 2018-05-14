@@ -63,8 +63,12 @@ public class SMTOperations {
             Set<Variable> rightOnlyVariables) {
         if (smtOptions.smt == SMTSolver.Z3) {
             try {
+                String query = KILtoSMTLib.translateImplication(left, right, rightOnlyVariables);
+                if (global.debug) {
+                    System.err.println("z3 query: " + query);
+                }
                 return z3.isUnsat(
-                        KILtoSMTLib.translateImplication(left, right, rightOnlyVariables),
+                        query,
                         smtOptions.z3ImplTimeout);
             } catch (UnsupportedOperationException | SMTTranslationFailure e) {
                 if (!smtOptions.ignoreMissingSMTLibWarning) {
