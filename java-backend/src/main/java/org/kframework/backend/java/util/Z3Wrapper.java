@@ -2,7 +2,6 @@
 package org.kframework.backend.java.util;
 
 import com.google.common.collect.ImmutableSet;
-import com.sun.jna.Pointer;
 import org.kframework.backend.java.z3.*;
 import org.kframework.main.GlobalOptions;
 import org.kframework.utils.OS;
@@ -11,11 +10,7 @@ import org.kframework.utils.errorsystem.KExceptionManager;
 import org.kframework.utils.file.FileUtil;
 import org.kframework.utils.options.SMTOptions;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.util.Set;
 
 /**
@@ -92,7 +87,16 @@ public class Z3Wrapper {
                     z3Process.getInputStream()));
                 input.write(SMT_PRELUDE + query + CHECK_SAT + "\n");
                 input.flush();
-                result = output.readLine();
+                result = null;
+                String line = output.readLine();
+                while (line != null && line.startsWith("(error")) {
+                    System.err.println("z3 error: " + line);
+                    result = line;
+                    line = output.readLine();
+                }
+                if (line != null) {
+                    result = line;
+                }
                 z3Process.destroy();
                 if (result != null) {
                     break;

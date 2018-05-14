@@ -39,8 +39,10 @@ public class KProve {
 
     private final KExceptionManager kem;
     private final Stopwatch sw;
-    private final FileUtil files;
-    private TTYInfo tty;
+    private static FileUtil files;
+    private static TTYInfo tty;
+    private static Tuple2<Definition, Module> compiled;
+    private static KProveOptions options;
 
     @Inject
     public KProve(KExceptionManager kem, Stopwatch sw, FileUtil files, TTYInfo tty) {
@@ -51,7 +53,8 @@ public class KProve {
     }
 
     public int run(KProveOptions options, CompiledDefinition compiledDefinition, Backend backend, Function<Module, Rewriter> rewriterGenerator) {
-        Tuple2<Definition, Module> compiled = getProofDefinition(options.specFile(files), options.defModule, options.specModule, compiledDefinition, backend, options.global, files, kem, sw);
+        compiled = getProofDefinition(options.specFile(files), options.defModule, options.specModule, compiledDefinition, backend, options.global, files, kem, sw);
+        this.options = options;
         Rewriter rewriter = rewriterGenerator.apply(compiled._1().mainModule());
         Module specModule = compiled._2();
         K results = rewriter.prove(specModule);
@@ -62,8 +65,21 @@ public class KProve {
         } else {
             exit = 1;
         }
-        KRun.prettyPrint(compiled._1().getModule("LANGUAGE-PARSING").get(), options.prettyPrint.output, s -> KRun.outputFile(s, options.prettyPrint, files), results, options.prettyPrint.color(tty.stdout, files.getEnv()));
+        //KRun.prettyPrint(compiled._1().getModule("LANGUAGE-PARSING").get(), this.options.prettyPrint.output, s -> KRun.outputFile(s, options.prettyPrint, files), results, options.prettyPrint.color(tty.stdout, files.getEnv()));
         return exit;
+    }
+
+    public static void prettyPrint(K results) {
+        Option<Module> module = compiled._1().getModule("LANGUAGE-PARSING");
+        KRun.prettyPrint(
+                module.get(),
+                options.prettyPrint.output,
+                s -> KRun.outputFile(s,
+                        options.prettyPrint, files),
+                results,
+                options.prettyPrint.color(
+                        tty.stdout,
+                        files.getEnv()));
     }
 
     private static Module getModule(String defModule, Map<String, Module> modules, Definition oldDef) {
