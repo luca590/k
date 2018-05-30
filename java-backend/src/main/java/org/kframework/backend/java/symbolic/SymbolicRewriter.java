@@ -660,11 +660,11 @@ public class SymbolicRewriter {
                                 logStep(step, targetCallDataStr, term, true);
                             }
                             if (term.equals(result)) {
-                                System.out.println("Step above: " + step
+                                System.out.println("\nStep above: " + step
                                         + ", infinite loop: spec rule rewrites term to itself.");
                                 proofResults.add(term);
                             } else {
-                                System.out.println("Step above: " + step
+                                System.out.println("\nStep above: " + step
                                         + ", evaluation ended after applying a spec rule and reaching the same result.");
                             }
                         }
@@ -687,7 +687,7 @@ public class SymbolicRewriter {
                     if (!KProve.options.global.log) {
                         logStep(step, targetCallDataStr, term, true);
                     }
-                    System.out.println("Step above: " + step + ", evaluation ended with no successors.");
+                    System.out.println("\nStep above: " + step + ", evaluation ended with no successors.");
                     /* final term */
                     proofResults.add(term);
                 } else {
