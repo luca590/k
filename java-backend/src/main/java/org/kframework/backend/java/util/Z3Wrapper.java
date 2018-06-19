@@ -69,6 +69,9 @@ public class Z3Wrapper {
         return result;
     }
 
+    /**
+     * @return true if query result is unsat, false otherwise.
+     */
     private boolean checkQueryWithExternalProcess(String query, int timeout) {
         String result = "";
         try {
@@ -112,6 +115,9 @@ public class Z3Wrapper {
         }
         if (!Z3_QUERY_RESULTS.contains(result)) {
             throw KEMException.criticalError("Z3 crashed on input query:\n" + query + "\nresult:\n" + result);
+        }
+        if (globalOptions.debug) {
+            System.err.println("\nz3 query result: " + result);
         }
         return "unsat".equals(result);
     }
