@@ -97,7 +97,7 @@ public class ConstrainedTerm extends JavaSymbolicObject {
     }
 
     public boolean implies(ConstrainedTerm constrainedTerm) {
-        ConjunctiveFormula conjunctiveFormula = matchImplies(constrainedTerm, true);
+        ConjunctiveFormula conjunctiveFormula = matchImplies(constrainedTerm, true, true);
         return conjunctiveFormula != null;
     }
 
@@ -126,7 +126,7 @@ public class ConstrainedTerm extends JavaSymbolicObject {
      * occurring only in the given constrained term (but not in this constrained term) are
      * existentially quantified.
      */
-    public ConjunctiveFormula matchImplies(ConstrainedTerm constrainedTerm, boolean expand) {
+    public ConjunctiveFormula matchImplies(ConstrainedTerm constrainedTerm, boolean expand, boolean finalImplication) {
         ConjunctiveFormula constraint = ConjunctiveFormula.of(constrainedTerm.termContext().global())
                 .add(data.constraint.substitution())
                 .add(data.term, constrainedTerm.data.term)
@@ -182,7 +182,16 @@ public class ConstrainedTerm extends JavaSymbolicObject {
         ConjunctiveFormula leftHandSide = data.constraint;
         ConjunctiveFormula rightHandSide = constraint.removeBindings(rightOnlyVariables);
         rightHandSide = (ConjunctiveFormula) rightHandSide.substituteAndEvaluate(leftHandSide.substitution(), context);
-        if (!leftHandSide.implies(rightHandSide, rightOnlyVariables)) {
+
+        if (finalImplication) {
+            System.err.println("\nStart: proving final implication:\n================= \n\t"
+                    + leftHandSide + "\n  implies \n\t" + rightHandSide);
+        }
+        boolean implicationResult = leftHandSide.implies(rightHandSide, rightOnlyVariables);
+        if (finalImplication) {
+            System.err.println("\nEnd: proving final implication\n================= \n");
+        }
+        if (!implicationResult) {
             return null;
         }
 
